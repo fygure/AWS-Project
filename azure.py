@@ -3,10 +3,10 @@
 #===========================================================================#
 from sqlite3 import connect
 import iam_functions
+import objects
 import psycopg2
 from psycopg2 import OperationalError
 from dotenv import dotenv_values
-import boto3
 #===========================================================================#
 """Azure to script connection"""
 config = dotenv_values(".env")
@@ -32,41 +32,7 @@ def create_connection(db_name, db_user, db_password, db_host, db_port):
         print(f"The error '{err}' occured")
     return connection
 #===========================================================================#
-
 # Create connection to PostgreSQL database (on Azure)
 connection = create_connection(DB_NAME, DB_USER, DB_PW, DB_HOST, DB_PORT)
 #===========================================================================#
 
-# Create client to connect to iam services using boto3
-client = boto3.client('iam')
-
-""" Need Paginator to list users to get username to then get their access key """
-
-# paginator = client.get_paginator('list_users')
-# for response in paginator.paginate():
-#     print(response)
-
-# responseObject = iam_functions.create_iam_user("Test1")
-# print(responseObject)
-
-# iam_functions.list_iam_users()
-# iam_functions.update_iam_user("Test1", "Test2")
-# iam_functions.list_iam_users()
-# iam_functions.delete_iam_user("Test2")
-
-# custom_policy_json = {
-#         "Version": "2012-10-17",
-#         "Statement": [{
-#             "Effect": "Allow",
-#             "Action": [
-#                 "ec2:*"
-#             ],
-#             "Resource": "*"
-#         }]
-#     }
-#iam_functions.create_iam_policy("swag", custom_policy_json)
-#iam_functions.delete_iam_user("test100")
-#iam_functions.attatch_custom_iam_policy_with_user("swag", "MAX")
-#iam_functions.attatch_managed_iam_policy_with_user("AWSMarketplaceFullAccess", "MAX")
-#iam_functions.detach_custom_policy_from_user("swag", "MAX")
-#iam_functions.detach_managed_policy_from_user("AWSMarketplaceFullAccess", "MAX")

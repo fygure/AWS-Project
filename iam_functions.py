@@ -23,14 +23,17 @@ def list_iam_users():
     try:
         iam_client = boto3.client('iam')
         paginator = iam_client.get_paginator('list_users')
+        name_list = []
         for response in paginator.paginate():
             for user in response["Users"]:
-                print("Username: ", user["UserName"])
+                #print("Username: ", user["UserName"])
+                name_list.append(user["UserName"])
     except ClientError as e:
         if e.response['Error']['Code'] == 'EntityAlreadyExists':
             print("Object already exists.")
         else:
             print(f"Unexpected error: '{e}'")
+    return name_list
 # TEST CODE IN SERVER
 #list_iam_users()
 #===========================================================================#
@@ -163,4 +166,34 @@ def detach_managed_policy_from_user(policy_name, username):
             print(f"Unexpected error: '{e}'")
 # TEST CODE IN SERVER
 #detach_managed_policy_from_user("AWSMarketplaceFullAccess", "MAX")
+#===========================================================================#
+def get_user_info(username):
+    try:
+        #sts = boto3.client('sts')
+        #account_id = sts.get_caller_identity()['Account']
+        #user_arn = f'arn:aws:iam::{account_id}:user/{username}'
+        iam_client = boto3.client('iam')
+        response = iam_client.get_user(
+            UserName=username,
+        )
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'EntityAlreadyExists':
+            print("Object already exists.")
+        else:
+            print(f"Unexpected error: '{e}'")
+    return response
+
+#===========================================================================#
+def get_user_group(username):
+    try:
+        iam_client = boto3.client('iam')
+        response = iam_client.list_groups_for_user(
+            UserName=username,
+        )
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'EntityAlreadyExists':
+            print("Object already exists.")
+        else:
+            print(f"Unexpected error: '{e}'")
+    return response
 #===========================================================================#
