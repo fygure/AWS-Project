@@ -4,6 +4,7 @@
 #===========================================================================#
 import iam_functions
 import objects
+from azure import create_connection, DB_HOST, DB_NAME, DB_PORT, DB_PW, DB_USER, put_data
 #===========================================================================#
 # Run these commands once
 # Create client to connect to iam services using boto3
@@ -40,7 +41,7 @@ import objects
 #iam_functions.detach_managed_policy_from_user("AWSMarketplaceFullAccess", "MAX")
 #===========================================================================#
 
-
+connection = create_connection(DB_NAME, DB_USER, DB_PW, DB_HOST, DB_PORT)
 
 #===========================================================================#
 """BELOW CONTAINS DATA PULLED FROM AWS IAM ACCOUNT"""
@@ -56,6 +57,7 @@ date_created = user_info["User"]["CreateDate"]
 user_groups = group_info_user["Groups"][0]["GroupName"]
 
 p1 = objects.User(username, user_ID, user_arn, date_created, user_groups)
-print(p1.user_arn)
+#print(p1.user_arn)
 #===========================================================================#
 
+put_data(p1)
