@@ -4,7 +4,9 @@
 #===========================================================================#
 import iam_functions
 import objects
-from azure import create_connection, DB_HOST, DB_NAME, DB_PORT, DB_PW, DB_USER, put_data
+from azure import create_connection, DB_HOST, DB_NAME, DB_PORT, DB_PW, DB_USER
+from tables import execute_query, create_users_table
+from datetime import date, datetime
 #===========================================================================#
 # Run these commands once
 # Create client to connect to iam services using boto3
@@ -40,13 +42,19 @@ from azure import create_connection, DB_HOST, DB_NAME, DB_PORT, DB_PW, DB_USER, 
 #iam_functions.detach_custom_policy_from_user("swag", "MAX")
 #iam_functions.detach_managed_policy_from_user("AWSMarketplaceFullAccess", "MAX")
 #===========================================================================#
-
-connection = create_connection(DB_NAME, DB_USER, DB_PW, DB_HOST, DB_PORT)
-
+def convert_to_tuple(listy):
+    return tuple(listy)
+#===========================================================================#
+# JSON Serializer for objects
+def json_serial(obj):
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError ("Type %s not serializable" % type(obj))
 #===========================================================================#
 """BELOW CONTAINS DATA PULLED FROM AWS IAM ACCOUNT"""
 name_list = iam_functions.list_iam_users()
 #print(name_list)
+
 user_info = iam_functions.get_user_info("MAX")
 group_info_user = iam_functions.get_user_group("MAX")
 
@@ -55,9 +63,34 @@ user_ID = user_info["User"]["UserId"]
 user_arn = user_info["User"]["Arn"]
 date_created = user_info["User"]["CreateDate"]
 user_groups = group_info_user["Groups"][0]["GroupName"]
-
 p1 = objects.User(username, user_ID, user_arn, date_created, user_groups)
 #print(p1.user_arn)
+
+listy = []
+
+for name in name_list:
+    info = iam_functions.get_user_info(name)
+    groups = iam_functions.get_user_group(name)
+    temp_list = []
+    temp_list.append(info["User"]["UserName"])
+    temp_list.append(info["User"]["UserId"])
+    temp_list.append(info["User"]["Arn"])
+    temp_list.append(json_serial(info["User"]["CreateDate"]))
+    temp_list.append(groups["Groups"][0]["GroupName"])
+    tupe = convert_to_tuple(temp_list)
+    listy.append(tupe)
+
+# for i in listy:
+#     print(i)
+
 #===========================================================================#
 
-put_data(p1)
+#===========================================================================#
+
+connection = create_connection(DB_NAME, DB_USER, DB_PW, DB_HOST, DB_PORT)
+#conn_string = f"host={DB_HOST} user={DB_USER} dbname={DB_NAME} password={DB_PW} sslmode=require"
+
+execute_query(connection, create_users_table)
+
+
+#===========================================================================#
