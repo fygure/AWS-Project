@@ -51,6 +51,13 @@ def json_serial(obj):
         return obj.isoformat()
     raise TypeError ("Type %s not serializable" % type(obj))
 #===========================================================================#
+
+#===========================================================================#
+# Connects to Azure PostgreSQL DB and executes query!
+#conn_string = f"host={DB_HOST} user={DB_USER} dbname={DB_NAME} password={DB_PW} sslmode=require"
+connection = create_connection(DB_NAME, DB_USER, DB_PW, DB_HOST, DB_PORT)
+execute_query(connection, create_users_table)
+#===========================================================================#
 """BELOW CONTAINS DATA PULLED FROM AWS IAM ACCOUNT"""
 name_list = iam_functions.list_iam_users()
 #print(name_list)
@@ -83,14 +90,10 @@ for name in name_list:
 # for i in listy:
 #     print(i)
 
+
+
 #===========================================================================#
-
 #===========================================================================#
-
-connection = create_connection(DB_NAME, DB_USER, DB_PW, DB_HOST, DB_PORT)
-#conn_string = f"host={DB_HOST} user={DB_USER} dbname={DB_NAME} password={DB_PW} sslmode=require"
-
-execute_query(connection, create_users_table)
-
-
+#===========================================================================#
+#===========================================================================#
 #===========================================================================#

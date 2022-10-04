@@ -17,11 +17,11 @@ def execute_query(connection, query):
 # Create table
 create_users_table = """
 CREATE TABLE IF NOT EXISTS users (
-    username TEXT NOT NULL,
-    user_id TEXT NOT NULL,
-    user_arn TEXT NOT NULL,
+    name TEXT NOT NULL,
+    id TEXT NOT NULL,
+    arn TEXT NOT NULL,
     date_created TEXT NOT NULL,
-    user_groups TEXT
+    groups TEXT
 )
 """
 #=========================================================================================#
