@@ -3,7 +3,6 @@
 # MAIN
 #===========================================================================#
 import iam_functions
-import objects
 from azure import create_connection, DB_HOST, DB_NAME, DB_PORT, DB_PW, DB_USER
 from tables import execute_query, create_users_table, execute_read_query
 from datetime import date, datetime
@@ -64,14 +63,14 @@ connection = create_connection(DB_NAME, DB_USER, DB_PW, DB_HOST, DB_PORT)
 name_list = iam_functions.list_iam_users()
 #print(name_list)
 
-user_info = iam_functions.get_user_info("MAX")
-group_info_user = iam_functions.get_user_group("MAX")
-
-username = user_info["User"]["UserName"]
-user_ID = user_info["User"]["UserId"]
-user_arn = user_info["User"]["Arn"]
-date_created = user_info["User"]["CreateDate"]
-user_groups = group_info_user["Groups"][0]["GroupName"]
+# UNCOMMENT TO TEST INDIVIDUAL BELOW
+# user_info = iam_functions.get_user_info("MAX")
+# group_info_user = iam_functions.get_user_group("MAX")
+# username = user_info["User"]["UserName"]
+# user_ID = user_info["User"]["UserId"]
+# user_arn = user_info["User"]["Arn"]
+# date_created = user_info["User"]["CreateDate"]
+# user_groups = group_info_user["Groups"][0]["GroupName"]
 #p1 = objects.User(username, user_ID, user_arn, date_created, user_groups)
 #print(p1.user_arn)
 
@@ -139,4 +138,6 @@ print(employees)
 #===========================================================================#
 #===========================================================================#
 #===========================================================================#
+#===========================================================================#
+connection.close()
 #===========================================================================#

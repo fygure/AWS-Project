@@ -14,3 +14,11 @@ $git filter-branch --index-filter "git rm -rf --cached --ignore-unmatch .env" HE
 
 #If accidentally added .env file to git do below
 $git rm -r --cached .env
+
+
+#Django commands
+>django-admin startproject (appname)
+>cd (into first folder)
+>python manage.py runserver
+#Then
+>python manage.py startapp (appname)

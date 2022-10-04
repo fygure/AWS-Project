@@ -3,7 +3,6 @@
 #===========================================================================#
 from urllib import response
 import iam_functions
-import objects
 import psycopg2
 from psycopg2 import OperationalError
 from dotenv import dotenv_values
