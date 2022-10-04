@@ -5,7 +5,7 @@
 import iam_functions
 import objects
 from azure import create_connection, DB_HOST, DB_NAME, DB_PORT, DB_PW, DB_USER
-from tables import execute_query, create_users_table
+from tables import execute_query, create_users_table, execute_read_query
 from datetime import date, datetime
 #===========================================================================#
 # Run these commands once
@@ -56,7 +56,9 @@ def json_serial(obj):
 # Connects to Azure PostgreSQL DB and executes query!
 #conn_string = f"host={DB_HOST} user={DB_USER} dbname={DB_NAME} password={DB_PW} sslmode=require"
 connection = create_connection(DB_NAME, DB_USER, DB_PW, DB_HOST, DB_PORT)
-execute_query(connection, create_users_table)
+
+# EXECUTE QUERY (DO IT ONCE)
+#execute_query(connection, create_users_table)
 #===========================================================================#
 """BELOW CONTAINS DATA PULLED FROM AWS IAM ACCOUNT"""
 name_list = iam_functions.list_iam_users()
@@ -70,10 +72,11 @@ user_ID = user_info["User"]["UserId"]
 user_arn = user_info["User"]["Arn"]
 date_created = user_info["User"]["CreateDate"]
 user_groups = group_info_user["Groups"][0]["GroupName"]
-p1 = objects.User(username, user_ID, user_arn, date_created, user_groups)
+#p1 = objects.User(username, user_ID, user_arn, date_created, user_groups)
 #print(p1.user_arn)
 
-listy = []
+# Parse data below to insert query
+users = []
 
 for name in name_list:
     info = iam_functions.get_user_info(name)
@@ -85,11 +88,51 @@ for name in name_list:
     temp_list.append(json_serial(info["User"]["CreateDate"]))
     temp_list.append(groups["Groups"][0]["GroupName"])
     tupe = convert_to_tuple(temp_list)
-    listy.append(tupe)
+    users.append(tupe)
 
-# for i in listy:
+# for i in users:
 #     print(i)
-
+#===========================================================================#
+# COMMENT AFTER RUN
+#user_records = ", ".join(["%s"] * len(users))
+#print(user_records)
+# insert_query = (
+#     f"INSERT INTO employees (name, id, arn, date_created, groups) VALUES ({user_records})"
+# )
+# cursor = connection.cursor()
+# cursor.execute(insert_query, users)
+# connection.commit()
+#===========================================================================#
+# COMMENT AFTER RUN
+# THIS DROPS THE WHOLE TABLE (DONT DO THIS LOL)
+# drop_table_query = (
+#     f"DROP TABLE users;"
+# )
+# cursor = connection.cursor()
+# cursor.execute(drop_table_query)
+#===========================================================================#
+# COMMENT AFTER RUN
+# testid = "testid2"
+# delete_query = (
+#     f"DELETE FROM employees WHERE id = '{str(testid)}'"
+# )
+# cursor = connection.cursor()
+# cursor.execute(delete_query)
+# connection.commit()
+#===========================================================================#
+# COMMENT AFTER RUN
+# insert_query = (
+#     f"INSERT INTO employees (name, id, arn, date_created, groups) VALUES (%s, %s, %s, %s, %s)"
+# )
+# cursor = connection.cursor()
+# cursor.execute(insert_query, ("testname2", "testid2", "testarn2", "testdate2", "testgroup2"))
+# connection.commit()
+#===========================================================================#
+# GRABS DATA FROM DATABASE
+select_employees = "SELECT * FROM employees"
+employees = execute_read_query(connection, select_employees)
+print(employees)
+#===========================================================================#
 
 
 #===========================================================================#
